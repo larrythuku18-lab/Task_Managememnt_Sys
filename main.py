@@ -1,4 +1,4 @@
-from task_utils import tasks, add_task, mark_task_as_complete, view_pending_tasks, calculate_progress
+from task_manager.task_utils import tasks, add_task, mark_task_as_complete, view_pending_tasks, calculate_progress
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
 
         elif choice == "2":
             view_pending_tasks(tasks)
-            if any(t["status"] == "pending" for t in tasks):
+            if any(not t["completed"] for t in tasks):
                 try:
                     index = int(input("Enter task number to mark as complete: "))
                     mark_task_as_complete(index, tasks)
@@ -34,7 +34,7 @@ def main():
 
         elif choice == "4":
             total = len(tasks)
-            completed = sum(1 for t in tasks if t["status"] == "complete")
+            completed = sum(1 for t in tasks if t["completed"])
             progress = calculate_progress(tasks)
             print(f"\nProgress: {completed}/{total} tasks completed ({progress:.1f}%)")
 

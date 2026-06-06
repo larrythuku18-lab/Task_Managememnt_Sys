@@ -1,26 +1,49 @@
 from datetime import datetime
+from validation import validate_task_title, validate_task_description, validate_due_date
 
-# Import validation functions
-None
-
-# Define tasks list
 tasks = []
 
-# Implement add_task function
-def add_task(title, description, due_date):
-    None
-    print("Task added successfully!")
-    
-# Implement mark_task_as_complete function
-def mark_task_as_complete(index, tasks=tasks):
-    None
-    print("Task marked as complete!")
-    
-# Implement view_pending_tasks function
-def view_pending_tasks(tasks=tasks):
-    None
+def create_task(title, description, due_date):
+    return {
+        "id": len(tasks) + 1,
+        "title": title,
+        "description": description,
+        "due_date": due_date,
+        "status": "pending",
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }
 
-# Implement calculate_progress function
+def add_task(title, description, due_date):
+    title = validate_task_title(title)
+    description = validate_task_description(description)
+    due_date = validate_due_date(due_date)
+    task = create_task(title, description, due_date)
+    tasks.append(task)
+    print("Task added successfully!")
+
+def mark_task_as_complete(index, tasks=tasks):
+    if index < 1 or index > len(tasks):
+        print("Invalid task number.")
+        return
+    if tasks[index - 1]["status"] == "complete":
+        print("Task is already marked as complete.")
+        return
+    tasks[index - 1]["status"] = "complete"
+    print("Task marked as complete!")
+
+def view_pending_tasks(tasks=tasks):
+    pending = [t for t in tasks if t["status"] == "pending"]
+    if not pending:
+        print("No pending tasks.")
+        return
+    print("\nPending Tasks:")
+    for t in pending:
+        print(f"  [{t['id']}] {t['title']} (Due: {t['due_date']})")
+        if t["description"]:
+            print(f"       {t['description']}")
+
 def calculate_progress(tasks=tasks):
-    None
-    return progress
+    if not tasks:
+        return 0.0
+    completed = sum(1 for t in tasks if t["status"] == "complete")
+    return (completed / len(tasks)) * 100
